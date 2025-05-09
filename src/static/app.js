@@ -13,23 +13,26 @@ document.addEventListener("DOMContentLoaded", () => {
       // Clear loading message
       activitiesList.innerHTML = "";
 
+      // Get the activity card template
+      const template = document.getElementById("activity-card-template");
+
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
+        const activityCard = template.content.cloneNode(true);
+
+        activityCard.querySelector("h4").textContent = name;
+        activityCard.querySelector(".description").textContent = details.description;
+        activityCard.querySelector(".schedule").textContent = details.schedule;
 
         const spotsLeft = details.max_participants - details.participants.length;
+        activityCard.querySelector(".availability").textContent = spotsLeft;
 
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          <p><strong>Participants:</strong></p>
-          <ul>
-            ${details.participants.map(participant => `<li>${participant}</li>`).join("")}
-          </ul>
-        `;
+        const participantsList = activityCard.querySelector(".participants-list");
+        details.participants.forEach(participant => {
+          const listItem = document.createElement("li");
+          listItem.textContent = participant;
+          participantsList.appendChild(listItem);
+        });
 
         activitiesList.appendChild(activityCard);
 
